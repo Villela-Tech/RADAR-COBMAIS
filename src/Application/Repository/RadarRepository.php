@@ -11,20 +11,24 @@ class RadarRepository
     private Client $client;
     private LoggerInterface $logger;
     private string $apiUrl;
-    private string $apiKey;
+    private string $base;
+    private string $user;
+    private string $password;
 
     public function __construct(LoggerInterface $logger)
     {
         $this->logger = $logger;
-        $this->apiUrl = $_ENV['RADAR_API_URL'];
-        $this->apiKey = $_ENV['RADAR_API_KEY'];
+        $this->apiUrl = $_ENV['RADAR_URL'] ?? '';
+        $this->base = $_ENV['RADAR_BASE'] ?? '';
+        $this->user = $_ENV['RADAR_USER'] ?? '';
+        $this->password = $_ENV['RADAR_PASSWORD'] ?? '';
         
         $this->client = new Client([
             'base_uri' => $this->apiUrl,
             'headers' => [
-                'Authorization' => "Bearer {$this->apiKey}",
                 'Content-Type' => 'application/json'
-            ]
+            ],
+            'auth' => [$this->user, $this->password]
         ]);
     }
 
@@ -36,7 +40,8 @@ class RadarRepository
                     'id_cobranca' => $dados['id_radar'],
                     'status' => $dados['status'],
                     'data_pagamento' => $dados['data_pagamento'],
-                    'valor_pago' => $dados['valor_pago']
+                    'valor_pago' => $dados['valor_pago'],
+                    'base' => $this->base
                 ]
             ]);
             
@@ -54,7 +59,11 @@ class RadarRepository
     public function consultarCobranca(string $idCobranca): array
     {
         try {
-            $response = $this->client->get("/api/cobrancas/{$idCobranca}");
+            $response = $this->client->get("/api/cobrancas/{$idCobranca}", [
+                'query' => [
+                    'base' => $this->base
+                ]
+            ]);
             
             return json_decode($response->getBody()->getContents(), true);
         } catch (GuzzleException $e) {

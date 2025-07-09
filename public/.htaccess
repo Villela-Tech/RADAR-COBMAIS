@@ -1,0 +1,15 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /radar-cobmais/
+    
+    # Redirecionar todas as requisições para o index.php
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^ index.php [QSA,L]
+</IfModule>
+
+# Proteger arquivos sensíveis
+<FilesMatch "^\.env|composer\.(json|lock)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch> 

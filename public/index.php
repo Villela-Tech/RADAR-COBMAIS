@@ -24,6 +24,9 @@ $container = $containerBuilder->build();
 AppFactory::setContainer($container);
 $app = AppFactory::create();
 
+// Configurar base path
+$app->setBasePath('/radar-cobmais');
+
 // Adicionar middleware para parsing de JSON
 $app->addBodyParsingMiddleware();
 
