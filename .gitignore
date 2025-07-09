@@ -46,6 +46,7 @@ docker-compose.override.yml
 /docker/mysql/data/
 
 # Outros
+/api-bitrix-radar/
 *.swp
 *.swo
 *.swn
