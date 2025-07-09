@@ -7,6 +7,9 @@ CREATE TABLE referencias_cobrancas (
     data_criacao DATETIME NOT NULL,
     data_pagamento DATETIME NULL,
     ultima_atualizacao DATETIME NOT NULL,
-    UNIQUE KEY uk_id_radar (id_radar),
-    UNIQUE KEY uk_id_cobmais (id_cobmais)
+    ativo BOOLEAN DEFAULT TRUE,
+    observacao TEXT NULL,
+    UNIQUE KEY uk_id_cobmais (id_cobmais),
+    INDEX idx_id_radar (id_radar),
+    INDEX idx_radar_ativo (id_radar, ativo)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci; 
