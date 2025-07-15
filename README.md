@@ -1,149 +1,64 @@
-# Integração Radar-Cobmais
+# Projeto Interno – Integração Tripla entre Radar WK, CobMais e Bitrix24
 
-Sistema de integração entre as plataformas Radar e Cobmais para gestão de cobranças.
+## 📝 Resumo
 
-## Funcionalidades
+Este projeto tem como objetivo desenvolver uma **integração robusta** entre três sistemas utilizados pela empresa:
 
-- Criação automática de cobranças no Cobmais a partir do Radar
-- Recebimento de notificações de pagamento do Cobmais
-- Atualização de status no Radar
-- Rastreamento de referências cruzadas entre os sistemas
-- Logging completo de operações
+- **Radar WK** (CRM / sistema de faturamento)
+- **CobMais** (plataforma de cobrança)
+- **Bitrix24** (CRM comercial)
 
-## Requisitos
+A finalidade é manter os três ambientes sincronizados, garantindo que as informações fluam corretamente entre os setores de faturamento, cobrança e comercial.
 
-- PHP 8.1 ou superior
-- MySQL 8.0 ou superior
-- Docker e Docker Compose
-- Composer
+---
 
-## Instalação
+## 🔄 Visão do Projeto
 
-1. Clone o repositório:
-```bash
-git clone https://github.com/seu-usuario/radar-cobmais.git
-cd radar-cobmais
-```
+- As **cobranças criadas no Radar WK** devem ser automaticamente enviadas ao **CobMais** para emissão.
+- O **retorno de status de pagamento** (pago, vencido, cancelado etc.) deve ser recebido do CobMais e atualizado no Radar WK.
+- As **informações de cobrança e cliente** devem também aparecer no **Bitrix24**, possibilitando o acompanhamento comercial.
+- Integração preferencialmente em **tempo real** via **webhooks** ou sincronização periódica (ex: a cada 5 ou 10 minutos).
+- Necessário desenvolver um **middleware** para:
+  - Intermediar as integrações
+  - Tratar falhas e gerar logs
+  - Permitir reenvios manuais de dados com erro
 
-2. Copie o arquivo de ambiente:
-```bash
-cp .env.example .env
-```
+---
 
-3. Configure as variáveis de ambiente no arquivo `.env`:
-```
-# Configurações da API
-APP_ENV=development
-APP_DEBUG=true
-APP_URL=http://localhost:8080
+## 🧠 Nível Técnico Recomendado
 
-# Database
-DB_CONNECTION=mysql
-DB_HOST=db
-DB_PORT=3306
-DB_DATABASE=radar_cobmais
-DB_USERNAME=seu_usuario
-DB_PASSWORD=sua_senha
+### 1. Desenvolvedor Backend (Pleno ou Sênior)
 
-# Cobmais API
-COBMAIS_API_URL=https://api.cobmais.com.br
-COBMAIS_SUBSCRIPTION_KEY=sua_chave
+**Requisitos:**
+- Experiência sólida com **APIs REST** (consumo e criação)
+- **Autenticação via token/OAuth2**
+- Integrações entre sistemas distintos
+- Desenvolvimento de **middleware backend** (Node.js, PHP, Python etc.)
+- Tratamento de erros e **logs estruturados**
+- Banco de dados relacionais (**PostgreSQL**, **MySQL**)
+- Desejável: uso de **Redis**, **filas**, controle de falhas
 
-# Radar API
-RADAR_API_URL=https://api.radar.com.br
-RADAR_API_KEY=sua_chave
+---
 
-# Webhooks
-WEBHOOK_SECRET=seu_segredo
-```
+### 2. Desenvolvedor de Integrações / Full Stack (Pleno ou Sênior)
 
-4. Inicie os containers:
-```bash
-docker-compose up -d
-```
+**Requisitos:**
+- Leitura e implementação de **documentação de APIs de terceiros**
+- Mapeamento e transformação de dados entre diferentes formatos
+- Automatização de integrações via scripts ou ferramentas low-code
+- Familiaridade com **Postman, Insomnia, Git**
+- Boas práticas de versionamento e documentação técnica
+- Desejável: conhecimento em **n8n**, **Make (Integromat)** ou **Zapier**
 
-5. Instale as dependências:
-```bash
-docker-compose exec app composer install
-```
+---
 
-6. Execute a migração do banco de dados:
-```bash
-docker-compose exec db mysql -u root -p radar_cobmais < database/migrations/001_criar_tabela_referencias.sql
-```
+## ⚠️ Considerações Finais
 
-## Uso
+- Os desenvolvedores devem ter **autonomia técnica** para estudar documentações e validar fluxos de integração.
+- É essencial prever **tratamento de falhas** (timeouts, erros de API, dados inconsistentes).
+- Testes **ponta a ponta** devem ser realizados antes da liberação do projeto.
+- A equipe de desenvolvimento deve alinhar-se com os setores de **Cobrança, TI e Comercial** para garantir a lógica dos fluxos.
 
-### Criar Cobrança
+---
 
-Para criar uma cobrança no Cobmais a partir do Radar, envie uma requisição POST para:
-
-```
-POST /api/cobmais/cobrancas
-
-{
-    "id_radar": "123",
-    "cpf_cnpj": "12345678901",
-    "numero_contrato": "CONT123",
-    "valor": 1000.00,
-    "data_vencimento": "2024-03-20",
-    "num_parcelas": 1,
-    "desconto_principal": 10,
-    "desconto_multa": 100,
-    "desconto_juros": 100,
-    "desconto_honorarios": 100
-}
-```
-
-### Receber Notificação de Pagamento
-
-O Cobmais enviará notificações de pagamento para:
-
-```
-POST /api/cobmais/webhook/pagamentos
-
-{
-    "id_acordo": 456,
-    "data_pagamento": "2024-03-15",
-    "valor_pagamento": 900.00
-}
-```
-
-## Desenvolvimento
-
-### Estrutura do Projeto
-
-```
-.
-├── config/
-│   ├── container.php
-│   └── routes.php
-├── database/
-│   └── migrations/
-├── docker/
-│   ├── mysql/
-│   └── nginx/
-├── public/
-│   └── index.php
-├── src/
-│   └── Application/
-│       ├── Controller/
-│       ├── Repository/
-│       └── Services/
-├── .env.example
-├── composer.json
-├── docker-compose.yml
-└── Dockerfile
-```
-
-### Logs
-
-Os logs da aplicação são enviados para o stdout e podem ser visualizados com:
-
-```bash
-docker-compose logs -f app
-```
-
-## Suporte
-
-Para suporte, entre em contato com a equipe de desenvolvimento. 
+> **Nota:** Este documento pode ser expandido com diagramas de arquitetura, cronogramas, exemplos de payloads, e endpoints técnicos conforme evolução do projeto.
